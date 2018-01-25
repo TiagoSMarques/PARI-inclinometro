@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/main.c
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/main.c
 myf.h
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.h
 prototypes.h
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/prototypes.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/prototypes.h
 
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.c
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.c
 myf.h
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.h
 
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.h
 stdio.h
 -
 stdlib.h
@@ -38,5 +38,5 @@ fcntl.h
 termios.h
 -
 
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/prototypes.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/prototypes.h
 

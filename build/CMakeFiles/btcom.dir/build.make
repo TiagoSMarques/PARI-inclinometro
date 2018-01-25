@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final"
+CMAKE_SOURCE_DIR = "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build"
+CMAKE_BINARY_DIR = "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build"
 
 # Include any dependencies generated for this target.
 include CMakeFiles/btcom.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/btcom.dir/flags.make
 
 CMakeFiles/btcom.dir/src/myf.c.o: CMakeFiles/btcom.dir/flags.make
 CMakeFiles/btcom.dir/src/myf.c.o: ../src/myf.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/btcom.dir/src/myf.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/btcom.dir/src/myf.c.o   -c "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/btcom.dir/src/myf.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/btcom.dir/src/myf.c.o   -c "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.c"
 
 CMakeFiles/btcom.dir/src/myf.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/btcom.dir/src/myf.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.c" > CMakeFiles/btcom.dir/src/myf.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.c" > CMakeFiles/btcom.dir/src/myf.c.i
 
 CMakeFiles/btcom.dir/src/myf.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/btcom.dir/src/myf.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.c" -o CMakeFiles/btcom.dir/src/myf.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/myf.c" -o CMakeFiles/btcom.dir/src/myf.c.s
 
 CMakeFiles/btcom.dir/src/myf.c.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/btcom.dir/src/myf.c.o.provides.build: CMakeFiles/btcom.dir/src/myf.c.
 
 CMakeFiles/btcom.dir/src/main.c.o: CMakeFiles/btcom.dir/flags.make
 CMakeFiles/btcom.dir/src/main.c.o: ../src/main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/btcom.dir/src/main.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/btcom.dir/src/main.c.o   -c "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/main.c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/btcom.dir/src/main.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/btcom.dir/src/main.c.o   -c "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/main.c"
 
 CMakeFiles/btcom.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/btcom.dir/src/main.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/main.c" > CMakeFiles/btcom.dir/src/main.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/main.c" > CMakeFiles/btcom.dir/src/main.c.i
 
 CMakeFiles/btcom.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/btcom.dir/src/main.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/main.c" -o CMakeFiles/btcom.dir/src/main.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/src/main.c" -o CMakeFiles/btcom.dir/src/main.c.s
 
 CMakeFiles/btcom.dir/src/main.c.o.requires:
 
@@ -117,7 +117,7 @@ btcom: CMakeFiles/btcom.dir/src/myf.c.o
 btcom: CMakeFiles/btcom.dir/src/main.c.o
 btcom: CMakeFiles/btcom.dir/build.make
 btcom: CMakeFiles/btcom.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable btcom"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable btcom"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/btcom.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -135,6 +135,6 @@ CMakeFiles/btcom.dir/clean:
 .PHONY : CMakeFiles/btcom.dir/clean
 
 CMakeFiles/btcom.dir/depend:
-	cd "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/build/CMakeFiles/btcom.dir/DependInfo.cmake" --color=$(COLOR)
+	cd "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build" "/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles/btcom.dir/DependInfo.cmake" --color=$(COLOR)
 .PHONY : CMakeFiles/btcom.dir/depend
 

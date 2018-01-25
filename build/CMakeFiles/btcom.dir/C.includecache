@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/main.c
+myf.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+prototypes.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/prototypes.h
+
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.c
+myf.h
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/myf.h
+stdio.h
+-
+stdlib.h
+-
+signal.h
+-
+string.h
+-
+sys/ipc.h
+-
+sys/shm.h
+-
+sys/stat.h
+-
+unistd.h
+-
+fcntl.h
+-
+termios.h
+-
+
+/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/src/prototypes.h
+

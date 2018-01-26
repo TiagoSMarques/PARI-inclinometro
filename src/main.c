@@ -22,7 +22,7 @@ int main (int main(int argc, char const *argv[])) {
         fgets(text, sizeof(text), stdin);
         ret=WriteToBT(fd, text);
         }
-        return 0;
+        //return 0;
     }
 
     else {

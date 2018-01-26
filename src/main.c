@@ -5,37 +5,51 @@
 
 int main (int main(int argc, char const *argv[])) {
 
-    int fd,oldS,ret=0;
-    int childpid;
-    char port[30]="/dev/rfcomm1";
-    char text[20]="22";
+    int pid_trans;
+    int pid_main;
+    int s_id;
 
-    fd=OpenPort(port, "\0");
-    oldS=ChangeBaudRate(fd,B9600);
-    if (fd == -1) { printf("Error. Couldn't open port\n"); exit(1); };
+    pid_main=fork();
+    if(pid_main == -1) { printf("Could not fork(). Exiting\n"); return -1; }
 
-    childpid=fork();
+    if (pid_main==0){       //parte da transmissão de dados
 
-    if (childpid == 0 ) {
-        printf("this is the child \n");
-        while (ret !=15 ) {
-        fgets(text, sizeof(text), stdin);
-        ret=WriteToBT(fd, text);
+        int fd,oldS,ret=0;
+
+        char port[30]="/dev/rfcomm1";
+        char text[20]="22";
+
+        fd=OpenPort(port, "\0");
+        oldS=ChangeBaudRate(fd,B9600);
+        if (fd == -1) { printf("Error. Couldn't open port\n"); exit(1); };
+
+        pid_trans=fork();
+        if(pid_trans == -1) { printf("Could not fork(). Exiting\n"); return -1; }
+
+        if (pid_trans == 0 ) {
+            //printf("this is the child \n");
+            while (ret !=15 ) {
+            fgets(text, sizeof(text), stdin);
+            ret=WriteToBT(fd, text);
+            }
         }
-        //return 0;
-    }
 
-    else {
-        printf("this is the parent\n");
-
-        sleep(2); //required to make flush work, for some reason
-        tcflush(fd,TCIOFLUSH);  //limpar o buffer de comunicações antigas
-
+        else {
+            //printf("this is the parent\n");
+            sleep(2); //required to make flush work, for some reason
+            tcflush(fd,TCIOFLUSH);  //limpar o buffer de comunicações antigas
             ReadPortUntilChar(fd);
+        }
+        printf("Comunication ended!\n");
+        close(fd);
+    }
+    else {              //parte da aplicação gtk
+
+        s_id=GtkMain();
+
+        //Allow elimination of shared memory
+        if(s_id > 0) shmctl(s_id, IPC_RMID, NULL);
     }
 
-
-    printf("Comunication ended!\n");
-    close(fd);
     return 0;
 }

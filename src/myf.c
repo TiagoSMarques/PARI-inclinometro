@@ -63,3 +63,61 @@ int ChangeBaudRate(int fd, int new_bd){
 
     return oldS;
 }
+
+int GetSharedMem(void){
+
+    key_t key;
+    int shm_id;
+    key =ftok("main.c",'X');    //gera uma key random baseado num ficheiro e caracter
+
+    //agora conectar ou escrever a shared memory com permissao 644
+    shm_id = shmget(key, SHM_SIZE, 0644 | IPC_CREAT);
+    if(shm_id == -1) {perror("shmget");return -1;}
+
+    return shm_id;
+}
+
+int GtkMain(void){
+
+    int n,shm_id;
+    char *data;     //ponteiro generico para servir de link para a shared memory
+    char str[200];
+
+    shm_id = GetSharedMem();
+    if(shm_id == 1) return -1;
+
+    //attach memory segment to get a pointer to it
+    data = shmat(shm_id, (void *) 0,0);
+    if (data == (char *) (-1)) {perror("shmat");exit(1);}
+
+    // data agora aponta para a área partilhada
+
+    /*
+    Fazer operações com na shared memory
+    */
+
+    //detatch do segmento de memoria uma vez que estamos a sair
+    if (shmdt(data)==1){perror("shmt");exit(1);}
+}
+
+int TransMain(void){
+
+    int n, shm_id;
+    int *data;
+    char str[200]; //string to put a message
+
+    shm_id=GetSharedMem();
+    if(shm_id ==-1) return-1; //failiure
+
+    data= (char *)shmat(shm_id, (void *) 0,0);
+    if (data == (char *) (-1)){perror("shmat");exit(1);}
+
+    // data agora aponta para a área partilhada
+
+    /*
+    Fazer operações com na shared memory
+    */
+
+    //detatch do segmento de memoria uma vez que estamos a sair
+    if (shmdt(data)==1){perror("shmt");exit(1);}
+}

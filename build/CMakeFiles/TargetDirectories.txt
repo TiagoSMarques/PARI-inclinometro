@@ -1,3 +1,0 @@
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles/rebuild_cache.dir
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles/btcom.dir
-/home/tiago/Dropbox/UA/5º ano/PARI/Projeto_Final/PARI-inclinometro/build/CMakeFiles/edit_cache.dir

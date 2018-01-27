@@ -152,6 +152,7 @@ void loop() {
   sensor3Vallcc = 0;
   sensor4Vallcc = 0;
 
+  //cconversaõ entre a leitura do sensor em V e a distancia em mm
   sensor1Vall = (0.613800 * sensor1Vall) + 75.801000;
   sensor2Vall = (0.615400 * sensor2Vall) + 75.692000;
   sensor3Vall = (0.613600 * sensor3Vall) + 75.042000;
@@ -246,20 +247,22 @@ roll=(roll_1+roll_2)/2;
  // counter = 0;
  // }
 
+  // tensão (mV) acho eu
+// Serial.print(sensor1Val, 5);
+// Serial.print('\t');
+// Serial.print(sensor2Val, 5);
+// Serial.print('\t');
+// Serial.print(sensor3Val, 5);
+// Serial.print('\t');
+// Serial.print(sensor4Val, 5);
+// Serial.print('\t');
 
- Serial.print(sensor1Val, 5);
- Serial.print('\t');
+  // distancia (mm)
  Serial.print(sensor1Vall, 5);
- Serial.print('\t');
- Serial.print(sensor2Val, 5);
  Serial.print('\t');
  Serial.print(sensor2Vall, 5);
  Serial.print('\t');
- Serial.print(sensor3Val, 5);
- Serial.print('\t');
  Serial.print(sensor3Vall, 5);
- Serial.print('\t');
- Serial.print(sensor4Val, 5);
  Serial.print('\t');
  Serial.print(sensor4Vall, 5);
  Serial.print('\t');

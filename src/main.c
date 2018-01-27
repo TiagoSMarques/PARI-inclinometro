@@ -9,10 +9,10 @@ int main (int main(int argc, char const *argv[])) {
     int pid_main;
     int s_id;
 
-    pid_main=fork();
-    if(pid_main == -1) { printf("Could not fork(). Exiting\n"); return -1; }
+//    pid_main=fork();
+//    if(pid_main == -1) { printf("Could not fork(). Exiting\n"); return -1; }
 
-    if (pid_main==0){       //parte da transmissão de dados
+//    if (pid_main==0){       //parte da transmissão de dados
 
         int fd,oldS,ret=0;
 
@@ -42,14 +42,14 @@ int main (int main(int argc, char const *argv[])) {
         }
         printf("Comunication ended!\n");
         close(fd);
-    }
-    else {              //parte da aplicação gtk
-
-        s_id=GtkMain();
+  //  }
+  //  else {              //parte da aplicação gtk
+//
+ //       s_id=GtkMain();
 
         //Allow elimination of shared memory
-        if(s_id > 0) shmctl(s_id, IPC_RMID, NULL);
-    }
+  //      if(s_id > 0) shmctl(s_id, IPC_RMID, NULL);
+  //  }
 
     return 0;
 }

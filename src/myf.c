@@ -19,12 +19,48 @@ int OpenPort(char* port_name, char* text) {
 int ReadPortUntilChar(int fd){
 
     char ch;
-    int n, ret;
+    int n, ret, count,x;
+    char *valSens;
+    struct SensInfo Dists;
 
+    count=0;
+    printf("Initializing reading...\n");
     do {
-        n=read(fd, &ch, 1);
-        if (n == -1) continue;
-        if (n > 0) { printf ("%c", ch); fflush(stdout); }
+        do {
+            valSens = (char*) calloc(1, sizeof(char));
+            x=0;
+            do {
+                n=read(fd, &ch, 1);
+                if (n == -1) continue;
+                if (n > 0) {
+                    //printf ("%c", ch);
+                    x++;
+                    valSens=realloc(valSens, sizeof(char)*x);
+                    strncat(valSens, &ch,1);
+                    fflush(stdout);
+                }
+            } while ((ch != '$') == (ch != '#'));
+            printf("%s",valSens);
+            count++;
+            switch (count) {
+                case 1:
+                   Dists.dist1=valSens;
+               case 2:
+                    Dists.dist2=valSens;
+                case 3:
+                    Dists.dist3=valSens;
+                case 4:
+                    Dists.dist4=valSens;
+                case 5:
+                    Dists.roll=valSens;
+                case 6:
+                    Dists.pitch=valSens;
+            }
+            free(valSens);
+
+        } while (ch != '#');
+            ch=' ';
+        printf("\n");
     } while (ch != '!');
 
     return 0;
@@ -103,14 +139,14 @@ int GtkMain(void){
 int TransMain(void){
 
     int n, shm_id;
-    int *data;
+    char *data;
     char str[200]; //string to put a message
 
     shm_id=GetSharedMem();
     if(shm_id ==-1) return-1; //failiure
 
-    data= (char *)shmat(shm_id, (void *) 0,0);
-    if (data == (char *) (-1)){perror("shmat");exit(1);}
+    data = shmat(shm_id, (void *) 0,0);
+    if (data == (char *) (-1)) {perror("shmat");exit(1);}
 
     // data agora aponta para a área partilhada
 

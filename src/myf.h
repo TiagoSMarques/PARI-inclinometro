@@ -16,6 +16,7 @@
 #include <fcntl.h>  //for open
 #include <termios.h>
 
+#include <memory.h>
 //para a shared memory
 int count_parentG;
 int count_childG;
@@ -23,3 +24,14 @@ int pid_child;
 int parent_pid;
 
 #define SHM_SIZE 51200      //50Mb
+
+struct SensInfo {
+
+char *dist1;
+char *dist2;
+char *dist3;
+char *dist4;
+
+char *roll;
+char *pitch;
+};

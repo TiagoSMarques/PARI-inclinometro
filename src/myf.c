@@ -34,33 +34,42 @@ int ReadPortUntilChar(int fd){
                 if (n == -1) continue;
                 if (n > 0) {
                     //printf ("%c", ch);
+                    if(ch=='$' || ch=='#'){break;}
                     x++;
                     valSens=realloc(valSens, sizeof(char)*x);
                     strncat(valSens, &ch,1);
                     fflush(stdout);
                 }
             } while ((ch != '$') == (ch != '#'));
-            printf("%s",valSens);
+            //printf("%s ",valSens);
             count++;
+            //printf("count: %d \n",count);
             switch (count) {
                 case 1:
-                   Dists.dist1=valSens;
+                   Dists.dist1=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.dist1,valSens);
                case 2:
-                    Dists.dist2=valSens;
+                   Dists.dist2=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.dist2,valSens);
                 case 3:
-                    Dists.dist3=valSens;
+                   Dists.dist3=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.dist3,valSens);
                 case 4:
-                    Dists.dist4=valSens;
+                   Dists.dist4=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.dist4,valSens);
                 case 5:
-                    Dists.roll=valSens;
+                   Dists.roll=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.roll,valSens);
                 case 6:
-                    Dists.pitch=valSens;
+                   Dists.pitch=(char*) calloc(1,sizeof(valSens)+1);
+                   strcpy(Dists.pitch,valSens);
             }
             free(valSens);
-
         } while (ch != '#');
-            ch=' ';
-        printf("\n");
+        printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
+        ch=' ';
+        count=0;
+        //printf("\n");
     } while (ch != '!');
 
     return 0;

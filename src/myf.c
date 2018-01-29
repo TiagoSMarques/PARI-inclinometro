@@ -43,26 +43,34 @@ int ReadPortUntilChar(int fd){
                     fflush(stdout);
                 }
             } while ((ch != '$') == (ch != '#'));
+
+            //if(exit==1){break;}
             //printf("%s ",valSens);
             count++;
             //printf("count: %d \n",count);
             switch (count) {
                 case 1:
+                   //free(Dists.dist1);
                    Dists.dist1=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist1,valSens);
                 case 2:
+                   // free(Dists.dist2);
                    Dists.dist2=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist2,valSens);
                 case 3:
+                    //free(Dists.dist3);
                    Dists.dist3=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist3,valSens);
                 case 4:
+                   // free(Dists.dist4);
                    Dists.dist4=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist4,valSens);
                 case 5:
+                   // free(Dists.roll);
                    Dists.roll=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.roll,valSens);
                 case 6:
+                   //free(Dists.pitch);
                    Dists.pitch=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.pitch,valSens);
             }
@@ -70,6 +78,7 @@ int ReadPortUntilChar(int fd){
             //print(" -%d", sizeof(valSens));
             free(valSens);
         } while (exit != 1);
+        //free(valSens);
         printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
         count=0;
         exit=0;

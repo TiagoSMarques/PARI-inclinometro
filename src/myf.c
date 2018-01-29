@@ -19,10 +19,11 @@ int OpenPort(char* port_name, char* text) {
 int ReadPortUntilChar(int fd){
 
     char ch;
-    int n, ret, count,x;
+    int n, ret, count,x,exit;
     char *valSens;
     struct SensInfo Dists;
 
+    exit=0;
     count=0;
     printf("Initializing reading...\n");
     do {
@@ -34,7 +35,8 @@ int ReadPortUntilChar(int fd){
                 if (n == -1) continue;
                 if (n > 0) {
                     //printf ("%c", ch);
-                    if(ch=='$' || ch=='#'){break;}
+                    if(ch=='#'){exit=1;break;}
+                    else if(ch=='$'){break;}
                     x++;
                     valSens=realloc(valSens, sizeof(char)*x);
                     strncat(valSens, &ch,1);
@@ -48,7 +50,7 @@ int ReadPortUntilChar(int fd){
                 case 1:
                    Dists.dist1=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist1,valSens);
-               case 2:
+                case 2:
                    Dists.dist2=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.dist2,valSens);
                 case 3:
@@ -64,13 +66,15 @@ int ReadPortUntilChar(int fd){
                    Dists.pitch=(char*) calloc(1,sizeof(valSens)+1);
                    strcpy(Dists.pitch,valSens);
             }
+            ch='|';
+            //print(" -%d", sizeof(valSens));
             free(valSens);
-        } while (ch != '#');
+        } while (exit != 1);
         printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
-        ch=' ';
         count=0;
+        exit=0;
         //printf("\n");
-    } while (ch != '!');
+    } while (1);
 
     return 0;
 }

@@ -25,6 +25,7 @@ int ReadPortUntilChar(int fd){
 
     exit=0;
     count=0;
+    int end=0;
     printf("Initializing reading...\n");
     do {
         do {
@@ -37,6 +38,7 @@ int ReadPortUntilChar(int fd){
                     //printf ("%c", ch);
                     if(ch=='#'){exit=1;break;}
                     else if(ch=='$'){break;}
+                    else if(ch=='!'){exit=1;end=1;break;}
                     x++;
                     valSens=realloc(valSens, sizeof(char)*x);
                     strncat(valSens, &ch,1);
@@ -83,7 +85,7 @@ int ReadPortUntilChar(int fd){
         count=0;
         exit=0;
         //printf("\n");
-    } while (1);
+    } while (end!=1);
 
     return 0;
 }
@@ -149,6 +151,12 @@ int GtkMain(void){
     if (data == (char *) (-1)) {perror("shmat");exit(1);}
 
     // data agora aponta para a área partilhada
+      int term=0;
+
+        while(term==0){
+        sleep(10);
+        term=1;
+        }
 
     /*
     Fazer operações com na shared memory
@@ -156,6 +164,8 @@ int GtkMain(void){
 
     //detatch do segmento de memoria uma vez que estamos a sair
     if (shmdt(data)==1){perror("shmt");exit(1);}
+
+    return shm_id;
 }
 
 int TransMain(void){

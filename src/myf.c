@@ -1,6 +1,7 @@
 //Funções auxiliares
 //
 #include "myf.h"
+#include "prototypes.h"
 
 int OpenPort(char* port_name, char* text) {
 
@@ -81,7 +82,8 @@ int ReadPortUntilChar(int fd){
             free(valSens);
         } while (exit != 1);
         //free(valSens);
-        printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
+        TransMain(Dists);
+        //printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
         count=0;
         exit=0;
         //printf("\n");
@@ -140,52 +142,52 @@ int GetSharedMem(void){
 int GtkMain(void){
 
     int n,shm_id;
-    char *data;     //ponteiro generico para servir de link para a shared memory
-    char str[200];
+    struct SensInfo *FromShm;   //ponteiro generico para servir de link para a shared memory
 
     shm_id = GetSharedMem();
     if(shm_id == 1) return -1;
 
     //attach memory segment to get a pointer to it
-    data = shmat(shm_id, (void *) 0,0);
-    if (data == (char *) (-1)) {perror("shmat");exit(1);}
+    FromShm = shmat(shm_id, (void *) 0,0);
+    if (FromShm == (struct SensInfo *) (-1)) {perror("shmat");exit(1);}
 
     // data agora aponta para a área partilhada
-      int term=0;
 
-        while(term==0){
-        sleep(10);
-        term=1;
-        }
 
-    /*
-    Fazer operações com na shared memory
-    */
+    printf("%s %s %s %s %s %s \n", FromShm->dist1, FromShm->dist2, FromShm->dist3, FromShm->dist4, FromShm->roll, FromShm->pitch);
 
     //detatch do segmento de memoria uma vez que estamos a sair
-    if (shmdt(data)==1){perror("shmt");exit(1);}
+    if (shmdt(FromShm)==1){perror("shmt");exit(1);}
 
     return shm_id;
 }
 
-int TransMain(void){
+int TransMain(struct SensInfo Dists){
 
     int n, shm_id;
-    char *data;
-    char str[200]; //string to put a message
+    struct SensInfoNum *ToShm;
 
     shm_id=GetSharedMem();
     if(shm_id ==-1) return-1; //failiure
 
-    data = shmat(shm_id, (void *) 0,0);
-    if (data == (char *) (-1)) {perror("shmat");exit(1);}
+    ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
+    if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
 
     // data agora aponta para a área partilhada
+    ToShm->dist1=atof(Dists.dist1);
+    ToShm->dist2=atof(Dists.dist2);
+    ToShm->dist3=atof(Dists.dist3);
+    ToShm->dist4=atof(Dists.dist4);
+    ToShm->roll=atof(Dists.roll);
+    ToShm->pitch=atof(Dists.pitch);
 
-    /*
-    Fazer operações com na shared memory
-    */
+    //ToShm->num=atoi(Dists.dist1);
+    ToShm->i=ToShm->i+1;
+
+    //printf("Transf: %f %f %f %f %f %f \n", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->roll, ToShm->pitch);
 
     //detatch do segmento de memoria uma vez que estamos a sair
-    if (shmdt(data)==1){perror("shmt");exit(1);}
+    if (shmdt(ToShm)==1){perror("shmt");exit(1);}
+
+    return 0;
 }

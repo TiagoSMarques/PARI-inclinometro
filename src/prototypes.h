@@ -1,4 +1,4 @@
-/*File generated automatically in manjaro by tiago on Sat Jan 27 21:46:33 WET 2018*/
+/*File generated automatically in manjaro by tiago on Tue Jan 30 16:13:41 WET 2018*/
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,7 +10,7 @@ int GetSharedMem (void);
 int GtkMain (void);
 int OpenPort (char *port_name, char *text);
 int ReadPortUntilChar (int fd);
-int TransMain (void);
+int TransMain (struct SensInfo Dists);
 int WriteToBT (int fd, char *text);
 #ifdef __cplusplus
 }

@@ -34,4 +34,19 @@ char *dist4;
 
 char *roll;
 char *pitch;
+
+int i;
+};
+
+struct SensInfoNum {
+
+float dist1;
+float dist2;
+float dist3;
+float dist4;
+
+float roll;
+float pitch;
+
+int i;
 };

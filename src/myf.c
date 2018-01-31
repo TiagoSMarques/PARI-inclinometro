@@ -141,25 +141,7 @@ int GetSharedMem(void){
 
 int GtkMain(void){
 
-    int n,shm_id;
-    struct SensInfo *FromShm;   //ponteiro generico para servir de link para a shared memory
 
-    shm_id = GetSharedMem();
-    if(shm_id == 1) return -1;
-
-    //attach memory segment to get a pointer to it
-    FromShm = shmat(shm_id, (void *) 0,0);
-    if (FromShm == (struct SensInfo *) (-1)) {perror("shmat");exit(1);}
-
-    // data agora aponta para a área partilhada
-
-
-    printf("%s %s %s %s %s %s \n", FromShm->dist1, FromShm->dist2, FromShm->dist3, FromShm->dist4, FromShm->roll, FromShm->pitch);
-
-    //detatch do segmento de memoria uma vez que estamos a sair
-    if (shmdt(FromShm)==1){perror("shmt");exit(1);}
-
-    return shm_id;
 }
 
 int TransMain(struct SensInfo Dists){
@@ -190,4 +172,51 @@ int TransMain(struct SensInfo Dists){
     if (shmdt(ToShm)==1){perror("shmt");exit(1);}
 
     return 0;
+}
+
+void destroy_Wind(GtkWidget * window, GdkEvent * event, gpointer data){
+        puts("Pedido de destruição de janela");
+        gtk_main_quit();  //necessary to to leave GTK main loop
+}
+
+void InterceptCTRL_C(int a) {
+	   g_print("Sair por CTRL-C\n");
+	   gtk_main_quit();
+}
+
+int beguin_read(GtkWidget * window, GdkEvent * event, gpointer data){
+
+    ContRead=0;
+    GtkTextView *ts = GTK_TEXT_VIEW(data);
+    GtkTextBuffer *buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"sens_val")));
+    if(ts) {
+
+        int n, shm_id;
+        struct SensInfoNum *ToShm;
+        char write[150];
+
+    while (ContRead==0){
+        shm_id=GetSharedMem();
+        if(shm_id ==-1) return-1; //failiure
+
+        ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
+        if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
+
+        while (gtk_events_pending ())
+        gtk_main_iteration ();
+
+       sprintf(write," %.03f %.03f %.03f %.03f %.03f %d \n", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->roll, ToShm->pitch, ToShm->i);
+        //printf("DDDD: %s",write);
+        gtk_text_buffer_set_text (buffer, write, -1);
+        sleep(1);
+        memset(&write[0], 0, sizeof(write));
+    }
+        //detatch do segmento de memoria uma vez que estamos a sair
+        if (shmdt(ToShm)==1){perror("shmt");exit(1);}
+    }
+}
+
+int stop_read(GtkWidget * window, GdkEvent * event, gpointer data){
+
+    ContRead=1;
 }

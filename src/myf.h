@@ -16,14 +16,22 @@
 #include <fcntl.h>  //for open
 #include <termios.h>
 
-#include <memory.h>
 //para a shared memory
+#include <memory.h>
+
+//para a interface gtk
+#include <gtk/gtk.h>
+#include <string.h>
+GtkBuilder * builderG;
+
+int ContRead;
+
 int count_parentG;
 int count_childG;
 int pid_child;
 int parent_pid;
 
-#define SHM_SIZE 51200      //50Mb
+#define SHM_SIZE 5120      //5Mb
 
 struct SensInfo {
 

@@ -9,7 +9,7 @@ include_directories(${GTK_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/srcutils)
 set(SOURCES src/myf.c src/main.c)
 #set(SOURCES src/server_test.c )
 add_executable(${PROG} ${SOURCES})
-
+set( CMAKE_CXX_FLAGS "-rdynamic")
 #-----------------------------------------------
 #The recommended way to find packages automatically using PkgConfig
 #See more on http://www.cmake.org/Wiki/CMake:How_To_Find_Libraries

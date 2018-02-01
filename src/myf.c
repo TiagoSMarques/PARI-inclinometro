@@ -175,6 +175,7 @@ int TransMain(struct SensInfo Dists){
 }
 
 void destroy_Wind(GtkWidget * window, GdkEvent * event, gpointer data){
+        ContRead=1;
         puts("Pedido de destruição de janela");
         gtk_main_quit();  //necessary to to leave GTK main loop
 }
@@ -184,39 +185,68 @@ void InterceptCTRL_C(int a) {
 	   gtk_main_quit();
 }
 
-int beguin_read(GtkWidget * window, GdkEvent * event, gpointer data){
+int begin_read(GtkWidget * window, GdkEvent * event, gpointer data){
 
     ContRead=0;
+//    gchar *filename="../build/30.png";
+
     GtkTextView *ts = GTK_TEXT_VIEW(data);
-    GtkTextBuffer *buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"sens_val")));
+    GtkTextBuffer *buffer_dist=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"sens_val")));
+    GtkTextBuffer *buffer_roll=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"text_roll")));
+    GtkTextBuffer *buffer_pitch=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"text_pitch")));
+
+  //  GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
+
     if(ts) {
+    //    gtk_image_set_from_file (image_pitch,filename);
 
         int n, shm_id;
         struct SensInfoNum *ToShm;
-        char write[150];
+        char write[100];
+        char roll[50];
+        char pitch[50];
 
-    while (ContRead==0){
-        shm_id=GetSharedMem();
-        if(shm_id ==-1) return-1; //failiure
+        while (ContRead==0){
+            shm_id=GetSharedMem();
+            if(shm_id ==-1) return-1; //failiure
 
-        ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
-        if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
+            ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
+            if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
 
-        while (gtk_events_pending ())
-        gtk_main_iteration ();
+           sprintf(write," %.03f | %.03f | %.03f | %.03f %d", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->i);
+           sprintf(roll," %.03f ", ToShm->roll);
+           sprintf(pitch," %.03f ",ToShm->pitch);
 
-       sprintf(write," %.03f %.03f %.03f %.03f %.03f %d \n", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->roll, ToShm->pitch, ToShm->i);
-        //printf("DDDD: %s",write);
-        gtk_text_buffer_set_text (buffer, write, -1);
-        sleep(1);
-        memset(&write[0], 0, sizeof(write));
-    }
+           gtk_text_buffer_set_text (buffer_dist, write, -1);
+           gtk_text_buffer_set_text (buffer_roll, roll, -1);
+           gtk_text_buffer_set_text (buffer_pitch, pitch, -1);
+
+           sleep(1);
+
+            memset(write, 0, sizeof(write));
+            memset(&roll[0], 0, sizeof(roll));
+            memset(&pitch[0], 0, sizeof(pitch));
+
+           while (gtk_events_pending ())
+           gtk_main_iteration ();
+        }
         //detatch do segmento de memoria uma vez que estamos a sair
         if (shmdt(ToShm)==1){perror("shmt");exit(1);}
     }
 }
 
+
 int stop_read(GtkWidget * window, GdkEvent * event, gpointer data){
 
     ContRead=1;
+}
+
+void change_img(GtkWidget * window, GdkEvent * event, gpointer data){
+
+    gchar *filename="../build/30.png";
+    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
+
+    gtk_image_set_from_file (image_pitch,filename);
+
+    //decobrir como funciona o timeout
 }

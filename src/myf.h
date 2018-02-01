@@ -24,7 +24,7 @@
 #include <string.h>
 GtkBuilder * builderG;
 
-int ContRead;
+gint ContRead;
 
 int count_parentG;
 int count_childG;

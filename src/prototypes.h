@@ -1,4 +1,4 @@
-/*File generated automatically in manjaro by tiago on Thu Feb  1 13:37:39 WET 2018*/
+/*File generated automatically in manjaro by tiago on Thu Feb  1 18:16:33 WET 2018*/
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,6 +11,7 @@ int GtkMain (void);
 void InterceptCTRL_C (int a);
 int OpenPort (char *port_name, char *text);
 int ReadPortUntilChar (int fd);
+gboolean RefreshData (gpointer data);
 int TransMain (struct SensInfo Dists);
 int WriteToBT (int fd, char *text);
 int begin_read (GtkWidget * window, GdkEvent * event, gpointer data);

@@ -17,6 +17,7 @@ int main (int argc, char *argv[]) {
     if (pid_main!=0){       //parte da transmissão de dados
 
         int fd,oldS,ret=0;
+        BtEnd=0;
 
         char port[30]="/dev/rfcomm1";
         char text[20]="";
@@ -30,10 +31,31 @@ int main (int argc, char *argv[]) {
 
         if (pid_trans == 0 ) {
             //printf("this is the child \n");
-            while (ret != 15 ) {
-            fgets(text, sizeof(text), stdin);
-            ret=WriteToBT(fd, text);
+
+        int shm_id;
+        //Acesso à shared memory
+        struct SensInfoNum *FromShm;   //ponteiro generico para servir de link para a shared memory
+        shm_id = GetSharedMem();
+        if(shm_id == 1) return -1;
+
+        //attach memory segment to get a pointer to it
+        FromShm =(struct SensInfoNum *) shmat(shm_id, (void *) 0,0);
+        if (FromShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
+        FromShm->BtWrite=0;
+
+            while (BtEnd != 1 ) {
+                if(FromShm->BtWrite==1){
+                //aceita comandos do terminal
+                //fgets(text, sizeof(text), stdin);i
+                sprintf(text,FromShm->BtText);
+                ret=WriteToBT(fd, text);
+                printf("envio: %s\n",text);
+                //sleep(1);
+                FromShm->BtWrite=0;
+                }
             }
+            if (shmdt(FromShm)==1){perror("shmt");exit(1);}
+            printf("terminado filho\n");
         }
         else {
             //printf("this is the parent\n");
@@ -41,6 +63,7 @@ int main (int argc, char *argv[]) {
             tcflush(fd,TCIOFLUSH);  //limpar o buffer de comunicações antigas
             ReadPortUntilChar(fd);
         }
+
 
         printf("Comunication ended!\n");
         close(fd);
@@ -89,7 +112,11 @@ int main (int argc, char *argv[]) {
 //            sleep(1);
 //        }
 
+        FromShm->BtWrite=1;
+        //FromShm->BtText="exit";
+        sprintf(FromShm->BtText,"exit");
 
+        sleep(2);
 
         if (shmdt(FromShm)==1){perror("shmt");exit(1);}
         printf("terminado filho\n");

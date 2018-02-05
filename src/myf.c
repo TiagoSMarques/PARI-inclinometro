@@ -82,7 +82,7 @@ int ReadPortUntilChar(int fd){
             free(valSens);
         } while (exit != 1);
         //free(valSens);
-        TransMain(Dists);
+        TransMain(Dists,fd);
         //printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
         count=0;
         exit=0;
@@ -96,12 +96,13 @@ int WriteToBT(int fd, char* text){
 
     write(fd, text, strlen(text) );
 
-    if (strcmp(text,"exit\n") == 0) {
-        return 15;
-    }
-    else {
-        return 0;
-    }
+    //if (strcmp(text,"exit") == 0) {
+    //    return 15;
+    //}
+    //else {
+    //    return 0;
+    //}
+    return 0;
 }
 
 int ChangeBaudRate(int fd, int new_bd){
@@ -144,7 +145,7 @@ int GtkMain(void){
 
 }
 
-int TransMain(struct SensInfo Dists){
+int TransMain(struct SensInfo Dists,int fd){
 
     int n, shm_id;
     struct SensInfoNum *ToShm;
@@ -165,6 +166,7 @@ int TransMain(struct SensInfo Dists){
 
     //ToShm->num=atoi(Dists.dist1);
     ToShm->i=ToShm->i+1;
+    ToShm->fd=fd;
 
     //printf("Transf: %f %f %f %f %f %f \n", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->roll, ToShm->pitch);
 
@@ -203,6 +205,8 @@ gboolean RefreshData(gpointer data){
     char write[100];
     char roll[50];
     char pitch[50];
+    FILE *f=fopen("sensores_data.txt","a+");
+    if (f == NULL){printf("Error opening file!\n");exit(1);}
 
     shm_id=GetSharedMem();
     if(shm_id ==-1) return-1; //failiure
@@ -210,9 +214,12 @@ gboolean RefreshData(gpointer data){
     ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
     if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
 
-    sprintf(write," %.03f | %.03f | %.03f | %.03f %d", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->i);
+    sprintf(write," %.03f | %.03f | %.03f | %.03f -%d", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->i);
     sprintf(roll," %.03f ", ToShm->roll);
     sprintf(pitch," %.03f ",ToShm->pitch);
+
+    //write to file
+    fprintf(f,"%s Roll: %s, Pitch: %s\n",write,roll,pitch);
 
     gtk_text_buffer_set_text (buffer_dist, write, -1);
     gtk_text_buffer_set_text (buffer_roll, roll, -1);
@@ -225,10 +232,13 @@ gboolean RefreshData(gpointer data){
     //detatch do segmento de memoria uma vez que estamos a sair
     if (shmdt(ToShm)==1){perror("shmt");exit(1);}
 
-    gchar *filename="../build/30.png";
+    gchar *filename="../build/img/30.png";
     GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
 
-    gtk_image_set_from_file (image_pitch,filename);
+    //gtk_image_set_from_file (image_pitch,filename);
+
+    //close file
+    fclose(f);
 
     return TRUE;
 }
@@ -242,10 +252,30 @@ int stop_read(GtkWidget * window, GdkEvent * event, gpointer data){
 
 void change_img(GtkWidget * window, GdkEvent * event, gpointer data){
 
-    gchar *filename="../build/30.png";
+    gchar *filename="../build/img/30.png";
     GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
 
     gtk_image_set_from_file (image_pitch,filename);
 
     //decobrir como funciona o timeout
+}
+
+int calib_sens(GtkWidget * window, GdkEvent * event, gpointer data){
+
+    int shm_id;
+    struct SensInfoNum *FromShm;
+
+    shm_id=GetSharedMem();
+    if(shm_id ==-1) return-1; //failiure
+
+    FromShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
+    if (FromShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
+
+    FromShm->BtWrite=1;
+    //FromShm->BtText="C";
+    sprintf(FromShm->BtText,"C");
+    printf("aqui\n");
+    //printf("Envido C para %i. \n",FromShm->calib);
+
+    if (shmdt(FromShm)==1){perror("shmt");exit(1);}
 }

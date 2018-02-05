@@ -1,6 +1,10 @@
 //bootloader speed 57600
 #include <LiquidCrystal.h>
+//#include <SoftwareSerial.h>
 #include <math.h>
+
+String state="";
+int count=0;
 
 //Definir entradas do LCD
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
@@ -73,21 +77,17 @@ float dist_3_4 = 875;
 //Definir variavel de calibraÃ§Ã£o
 int calival = 0;
 
-//Definir varavel de reÃ§esÃ£o bluetooth
-
-int Received=0;
-
 //Contador para envio dados app mit
 
 int counter=0;
 int counter1=0;
 
-
+  //SoftwareSerial BTserial(2, 3); // RX | TX
 //**************************************************************************************
 void setup() {
 
   Serial.begin(9600);
-
+  
   lcd.begin(16, 2);
 
   lcd.print("Inclinometro");
@@ -98,20 +98,51 @@ void setup() {
 
   pinMode(cali, INPUT);
 
+   //BTserial.begin(9600);
+
 }
 //**************************************************************************************
 void loop() {
 
 //recesÃ£o da ordem de calibraÃ§Ã£o por bluetooth
-   if(Serial.available()>0) //send data only when you recive data
- { 
-    Received = Serial.read(); //arrumar o caracter que chegou
-    //-.-...........................................................................................................................................................................................................................................................................               Serial.print("Char recebido: ");
-    //Serial.println(Received);
- }
+//   if(Serial.available()>0) //send data only when you recive data
+// { 
+//    Received = Serial.read(); //arrumar o caracter que chegou
+//    //-.-...........................................................................................................................................................................................................................................................................               Serial.print("Char recebido: ");
+//    //Serial.println(Received);
+// }
+
+if(Serial.available() > 0){ // Checks whether data is comming from the serial port
+  state = Serial.readString(); // Reads the data from the serial port
+  //Serial.print("Recebido: "); Serial.print(state);
+}
+
+if (state == "off\n") {
+  //digitalWrite(ledPin, LOW); // Turn LED OFF
+  //BTserial.println("LED: OFF"); // Send back, to the phone, the String "LED: ON"
+  Serial.println("LED: OFF");
+  state = "";
+}
+
+else if (state == "on\n") {
+//  digitalWrite(ledPin, HIGH);
+  //BTserial.println("LED: ON");
+  Serial.println("LED: ON");
+  state = "";
+}
+else if (state == "exit\n"){
+  //BTserial.println("bye!");
+  Serial.println("bye!");
+  state= "";
+}
+
+//else if (state != "") {
+  //BTserial.println("Not understood");
+  //state="";
+//}
 
   //Ler e guardar valor da entrada digital
-  calival = digitalRead(cali);
+ calival = digitalRead(cali);
 
   
 
@@ -162,14 +193,13 @@ void loop() {
    // }
 
   //IntroduÃ§Ã£o do valor de calibraÃ§Ã£o****
-  if (calival == 1 || Received == 'C')
-  {
+  if (calival == 1 || state == "C") {
     distance1 = sensor1Vall;
     distance2 = sensor2Vall;
     distance3 = sensor3Vall;
     distance4 = sensor4Vall;
 
-    Received = 0;
+    state = "";
   }
 
   //Efectuar calibraÃ§Ã£o******************
@@ -258,20 +288,33 @@ roll=(roll_1+roll_2)/2;
 // Serial.print('\t');
 
   // distancia (mm)
+// Serial.print(sensor1Vall, 5);
+// Serial.print('\t');
+// Serial.print(sensor2Vall, 5);
+// Serial.print('\t');
+// Serial.print(sensor3Vall, 5);
+// Serial.print('\t');
+// Serial.print(sensor4Vall, 5);
+// Serial.print('\t');
+// Serial.print(pitch, 5);
+// Serial.print('\t');
+// Serial.print(roll, 5);
+// Serial.print('\n');
+
+
  Serial.print(sensor1Vall, 5);
- Serial.print('\t');
+ Serial.print('$');
  Serial.print(sensor2Vall, 5);
- Serial.print('\t');
+ Serial.print('$');
  Serial.print(sensor3Vall, 5);
- Serial.print('\t');
+ Serial.print('$');
  Serial.print(sensor4Vall, 5);
- Serial.print('\t');
+ Serial.print('$');
  Serial.print(pitch, 5);
- Serial.print('\t');
+ Serial.print('$');
  Serial.print(roll, 5);
- Serial.print('\n');
-
-
+ Serial.print('#');
+ //Serial.print('\n');
 
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -284,6 +327,7 @@ roll=(roll_1+roll_2)/2;
 //****************************
   lcd.print("Roll:");
   lcd.print(roll, 5);
-
-  delay(5);
+  
+ delay(500);
+ count++;
 }

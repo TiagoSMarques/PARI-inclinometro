@@ -25,6 +25,7 @@
 GtkBuilder * builderG;
 
 gint ContRead;
+gint BtEnd;
 
 int count_parentG;
 int count_childG;
@@ -57,4 +58,8 @@ float roll;
 float pitch;
 
 int i;
+int fd;
+int BtWrite;
+char BtText[20];
+
 };

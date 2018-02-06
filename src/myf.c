@@ -140,10 +140,10 @@ int GetSharedMem(void){
     return shm_id;
 }
 
-int GtkMain(void){
-
-
-}
+//int GtkMain(void){
+//
+//
+//}
 
 int TransMain(struct SensInfo Dists,int fd){
 
@@ -225,8 +225,8 @@ gboolean RefreshData(gpointer data){
     GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
     GtkImage *image_roll=GTK_IMAGE(gtk_builder_get_object(builderG, "roll_img"));
     //gchar* filename;
-    gchar filename1[30];
-    gchar filename2[30];
+    gchar filename1[50];
+    gchar filename2[50];
     int order;
     float aux,spaces;
 
@@ -237,7 +237,7 @@ gboolean RefreshData(gpointer data){
         order=ceil(aux);
         if(order>5){order=5;}
         if(ToShm->pitch<=0.05){order=0;}
-        g_snprintf(filename1,30,"../build/img/vista_lado%i-.png",order);
+        g_snprintf(filename1,50,"../srcutils/img/vista_lado%i-.png",order);
     }
     else{
         spaces=2.0/7.0;
@@ -246,7 +246,7 @@ gboolean RefreshData(gpointer data){
         //printf("pitch %i\n", order);
         if(ToShm->pitch>=-0.05){order=0;}
         if (order>7){order=7;}
-        g_snprintf(filename1,30,"../build/img/vista_lado%i+.png",order);
+        g_snprintf(filename1,50,"../srcutils/img/vista_lado%i+.png",order);
         //printf("%s",filename2);
     }
 
@@ -258,7 +258,7 @@ gboolean RefreshData(gpointer data){
         order=ceil(aux);
         if(ToShm->roll<=0.05){order=0;}
         if(order>5){order=5;}
-        g_snprintf(filename2,30,"../build/img/vista_tras%i-.png",order);
+        g_snprintf(filename2,50,"../srcutils/img/vista_tras%i-.png",order);
     }
     else{
         spaces=2.0/4.0;
@@ -267,7 +267,7 @@ gboolean RefreshData(gpointer data){
         //printf("roll %i\n",order);
         if(ToShm->roll>=-0.05){order=0;}
         if (order>4){order=4;}
-        g_snprintf(filename2,30,"../build/img/vista_tras%i+.png",order);
+        g_snprintf(filename2,50,"../srcutils/img/vista_tras%i+.png",order);
     }
 
        // printf("%s\n",filename1);
@@ -282,7 +282,7 @@ gboolean RefreshData(gpointer data){
     gtk_text_buffer_set_text (buffer_roll, roll, -1);
     gtk_text_buffer_set_text (buffer_pitch, pitch, -1);
 
-    memset(write, 0, sizeof(write));
+    memset(&write[0], 0, sizeof(write));
     memset(&roll[0], 0, sizeof(roll));
     memset(&pitch[0], 0, sizeof(pitch));
 
@@ -299,15 +299,15 @@ int stop_read(GtkWidget * window, GdkEvent * event, gpointer data){
     g_source_remove(ContRead);
 }
 
-void change_img(GtkWidget * window, GdkEvent * event, gpointer data){
-
-    gchar *filename="../build/img/30.png";
-    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
-
-    gtk_image_set_from_file (image_pitch,filename);
-
-    //decobrir como funciona o timeout
-}
+//void change_img(GtkWidget * window, GdkEvent * event, gpointer data){
+//
+//    gchar *filename="../build/img/30.png";
+//    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
+//
+//    gtk_image_set_from_file (image_pitch,filename);
+//
+//    //decobrir como funciona o timeout
+//}
 
 int calib_sens(GtkWidget * window, GdkEvent * event, gpointer data){
 

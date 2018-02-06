@@ -86,7 +86,7 @@ int main (int argc, char *argv[]) {
 
         /* load the interface after a configuration file*/
         builderG = gtk_builder_new();
-        gtk_builder_add_from_file(builderG,"GtkApp.glade", NULL);
+        gtk_builder_add_from_file(builderG,"../srcutils/GtkApp.glade", NULL);
 
         /* connect the signals in the interface */
         gtk_builder_connect_signals(builderG, NULL);

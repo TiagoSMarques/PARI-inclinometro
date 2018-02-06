@@ -17,7 +17,7 @@ find_package(PkgConfig REQUIRED)  #necessary for next command to work
 pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
 link_directories(${GTK_LIBRARY_DIRS})
-target_link_libraries(${PROG} ${GTK_LIBRARIES} bluetooth)
+target_link_libraries(${PROG} ${GTK_LIBRARIES} bluetooth m)
 
 #-----------------------------------------------------
 # --- add custom mtargets (and dependencies)

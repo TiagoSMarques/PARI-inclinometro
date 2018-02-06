@@ -10,6 +10,7 @@ int main (int argc, char *argv[]) {
     int pid_trans;
     int pid_main;
     //int s_id;
+    BtEnd=0;
 
     pid_main=fork();
     if(pid_main == -1) { printf("Could not fork(). Exiting\n"); return -1; }
@@ -17,7 +18,6 @@ int main (int argc, char *argv[]) {
     if (pid_main!=0){       //parte da transmissão de dados
 
         int fd,oldS,ret=0;
-        BtEnd=0;
 
         char port[30]="/dev/rfcomm1";
         char text[20]="";
@@ -31,42 +31,38 @@ int main (int argc, char *argv[]) {
 
         if (pid_trans == 0 ) {
             //printf("this is the child \n");
+            int shm_id;
+            //Acesso à shared memory
+            struct SensInfoNum *FromShm;   //ponteiro generico para servir de link para a shared memory
+            shm_id = GetSharedMem();
+            if(shm_id == 1) return -1;
 
-        int shm_id;
-        //Acesso à shared memory
-        struct SensInfoNum *FromShm;   //ponteiro generico para servir de link para a shared memory
-        shm_id = GetSharedMem();
-        if(shm_id == 1) return -1;
-
-        //attach memory segment to get a pointer to it
-        FromShm =(struct SensInfoNum *) shmat(shm_id, (void *) 0,0);
-        if (FromShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
-        FromShm->BtWrite=0;
+            //attach memory segment to get a pointer to it
+            FromShm =(struct SensInfoNum *) shmat(shm_id, (void *) 0,0);
+            if (FromShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
+            FromShm->BtWrite=0;
 
             while (BtEnd != 1 ) {
                 if(FromShm->BtWrite==1){
-                //aceita comandos do terminal
                 //fgets(text, sizeof(text), stdin);i
                 sprintf(text,FromShm->BtText);
                 ret=WriteToBT(fd, text);
-                printf("envio: %s\n",text);
-                //sleep(1);
+                printf("end: %i\n",BtEnd);
+                sleep(1);
                 FromShm->BtWrite=0;
                 }
             }
             if (shmdt(FromShm)==1){perror("shmt");exit(1);}
-            printf("terminado filho\n");
+            printf("terminado filho 2\n");
         }
         else {
             //printf("this is the parent\n");
             sleep(2); //required to make flush work, for some reason
             tcflush(fd,TCIOFLUSH);  //limpar o buffer de comunicações antigas
             ReadPortUntilChar(fd);
+            printf("Comunication ended!\n");
+            close(fd);
         }
-
-
-        printf("Comunication ended!\n");
-        close(fd);
     }
     else {              //parte da aplicação gtk
         printf("Filho principal\n");
@@ -119,7 +115,7 @@ int main (int argc, char *argv[]) {
         sleep(2);
 
         if (shmdt(FromShm)==1){perror("shmt");exit(1);}
-        printf("terminado filho\n");
+        printf("terminado filho 1\n");
         //Allow elimination of shared memory
         if(shm_id > 0) shmctl(shm_id, IPC_RMID, NULL);
     }

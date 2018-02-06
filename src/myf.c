@@ -178,6 +178,7 @@ int TransMain(struct SensInfo Dists,int fd){
 
 void destroy_Wind(GtkWidget * window, GdkEvent * event, gpointer data){
         ContRead=1;
+        BtEnd=1;
         puts("Pedido de destruição de janela");
         gtk_main_quit();  //necessary to to leave GTK main loop
 }
@@ -221,6 +222,62 @@ gboolean RefreshData(gpointer data){
     //write to file
     fprintf(f,"%s Roll: %s, Pitch: %s\n",write,roll,pitch);
 
+    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
+    GtkImage *image_roll=GTK_IMAGE(gtk_builder_get_object(builderG, "roll_img"));
+    //gchar* filename;
+    gchar filename1[30];
+    gchar filename2[30];
+    int order;
+    float aux,spaces;
+
+    //Escolha de imagens para pitch
+    if (ToShm->pitch>=0){
+        spaces=2.0/5.0;
+        aux=(ToShm->pitch)/spaces;
+        order=ceil(aux);
+        if(order>5){order=5;}
+        if(ToShm->pitch<=0.05){order=0;}
+        g_snprintf(filename1,30,"../build/img/vista_lado%i-.png",order);
+    }
+    else{
+        spaces=2.0/7.0;
+        aux=ToShm->pitch/spaces;
+        order=ceil(abs(aux));
+        //printf("pitch %i\n", order);
+        if(ToShm->pitch>=-0.05){order=0;}
+        if (order>7){order=7;}
+        g_snprintf(filename1,30,"../build/img/vista_lado%i+.png",order);
+        //printf("%s",filename2);
+    }
+
+    //Escolha de imagem para o Roll
+
+    if (ToShm->roll>=0){
+        spaces=2.0/5.0;
+        aux=(ToShm->roll)/spaces;
+        order=ceil(aux);
+        if(ToShm->roll<=0.05){order=0;}
+        if(order>5){order=5;}
+        g_snprintf(filename2,30,"../build/img/vista_tras%i-.png",order);
+    }
+    else{
+        spaces=2.0/4.0;
+        aux=ToShm->pitch/spaces;
+        order=ceil(abs(aux));
+        //printf("roll %i\n",order);
+        if(ToShm->roll>=-0.05){order=0;}
+        if (order>4){order=4;}
+        g_snprintf(filename2,30,"../build/img/vista_tras%i+.png",order);
+    }
+
+       // printf("%s\n",filename1);
+       // printf("%s\n",filename2);
+    //Set pitch and roll img in gtk
+    gtk_image_set_from_file (image_pitch,filename1);
+    gtk_image_set_from_file (image_roll,filename2);
+    //close file
+    fclose(f);
+
     gtk_text_buffer_set_text (buffer_dist, write, -1);
     gtk_text_buffer_set_text (buffer_roll, roll, -1);
     gtk_text_buffer_set_text (buffer_pitch, pitch, -1);
@@ -231,14 +288,6 @@ gboolean RefreshData(gpointer data){
 
     //detatch do segmento de memoria uma vez que estamos a sair
     if (shmdt(ToShm)==1){perror("shmt");exit(1);}
-
-    gchar *filename="../build/img/30.png";
-    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
-
-    //gtk_image_set_from_file (image_pitch,filename);
-
-    //close file
-    fclose(f);
 
     return TRUE;
 }

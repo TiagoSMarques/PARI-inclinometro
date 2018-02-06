@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
-
+#include <math.h>
 //#include <cv.h>
 //#include <highgui.h>
 
@@ -25,7 +25,7 @@
 GtkBuilder * builderG;
 
 gint ContRead;
-gint BtEnd;
+int BtEnd;
 
 int count_parentG;
 int count_childG;

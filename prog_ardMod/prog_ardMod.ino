@@ -130,7 +130,7 @@ else if (state == "on\n") {
   Serial.println("LED: ON");
   state = "";
 }
-else if (state == "exit\n"){
+else if (state == "exit"){
   //BTserial.println("bye!");
   Serial.println("bye!");
   state= "";
@@ -328,6 +328,6 @@ roll=(roll_1+roll_2)/2;
   lcd.print("Roll:");
   lcd.print(roll, 5);
   
- delay(500);
+ delay(1000);
  count++;
 }

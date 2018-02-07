@@ -1,7 +1,33 @@
+/**
+ *      @file  myf.c
+ *      @brief Ficheiro que contem funções auxiliares ao funcionamento do programa.
+ *      Este ficheiro contem as definições das funções que realizam as tarefas essenciais ao programa.
+        Funções estas como o estabelecimento da comunicação, a escrita e leitura de dados a
+        partir da porta série e escrita na shared memory.
+ *
+ *     Mais informações sobre o projeto em: https://github.com/TiagoSMarques/PARI-inclinometro
+ *     @author  Tiago Marques,  marques.tiago19@ua.pt
+ *
+ *   @internal
+ *     Created  28-Jan-2018
+ *   Revisions  06-Feb-2018
+ *
+ * =====================================================================================
+ */
+
+
 //Funções auxiliares
-//
+
 #include "myf.h"
 #include "prototypes.h"
+
+/*! \brief Função que estabelece comunicação com a porta serie que corresponde à ligação bluetooth.
+ *
+ *
+ * @param char *port_name - String com o nome físico da porta onde que está emparelhada com o dispositivo de bluetooth.
+ * @param char *text - Texto a enviar quando estalelece a ligação.
+ * \return Inteiro com o identificador da porta.
+ */
 
 int OpenPort(char* port_name, char* text) {
 
@@ -17,6 +43,14 @@ int OpenPort(char* port_name, char* text) {
 
 }
 
+/*! \brief Função que envia dados pela porta série para o dispositivo bluetooth emparelhado.
+ *
+ * Para além de ler os caracteres que chegam da porta serie a função organiza-os através da identificadores
+de separação entre valores e entre linhas de dados. Os dados são depois "arrumados" numa estrutura e
+posteriormente convertidos para decimais.
+ * @param int fd - Inteiro com o identificador da porta
+ * \return Inteiro genérico.
+ */
 int ReadPortUntilChar(int fd){
 
     char ch;
@@ -47,10 +81,8 @@ int ReadPortUntilChar(int fd){
                 }
             } while ((ch != '$') == (ch != '#'));
 
-            //if(exit==1){break;}
-            //printf("%s ",valSens);
             count++;
-            //printf("count: %d \n",count);
+
             switch (count) {
                 case 1:
                    //free(Dists.dist1);
@@ -78,33 +110,37 @@ int ReadPortUntilChar(int fd){
                    strcpy(Dists.pitch,valSens);
             }
             ch='|';
-            //print(" -%d", sizeof(valSens));
             free(valSens);
         } while (exit != 1);
-        //free(valSens);
         TransMain(Dists,fd);
-        //printf("%s %s %s %s %s %s \n", Dists.dist1, Dists.dist2, Dists.dist3, Dists.dist4, Dists.roll, Dists.pitch);
         count=0;
         exit=0;
-        //printf("\n");
     } while (end!=1);
 
     return 0;
 }
 
+/*! \brief Função que envia uma mensagem por porta série.
+ *
+ *
+ * @param int fd - Inteiro que identifica a porta série.
+ * @param char *text - Texto a enviar quando estalelece a ligação.
+ * \return Inteiro genérico.
+ */
 int WriteToBT(int fd, char* text){
 
     write(fd, text, strlen(text) );
 
-    //if (strcmp(text,"exit") == 0) {
-    //    return 15;
-    //}
-    //else {
-    //    return 0;
-    //}
     return 0;
 }
 
+/*! \brief Função que altera o baudrate da cominucação.
+ *
+ *
+ * @param int fd - Inteiro que identifica a porta série.
+ * @param int new_bd - Novo baudrate.
+ * \return Inteiro Com o valor do antigo baudrate.
+ */
 int ChangeBaudRate(int fd, int new_bd){
 
     int oldS;
@@ -127,6 +163,12 @@ int ChangeBaudRate(int fd, int new_bd){
     return oldS;
 }
 
+/*! \brief Função que gera a chave para aceder à shared memory e se conecta a ela.
+ *
+ *
+ * @param void
+ * \return Inteiro com o valor do identificador da shared memory criada.
+ */
 int GetSharedMem(void){
 
     key_t key;
@@ -140,11 +182,13 @@ int GetSharedMem(void){
     return shm_id;
 }
 
-//int GtkMain(void){
-//
-//
-//}
-
+/*! \brief Função que converte os dados recebidos para números decimais e os escreve na shared memory.
+ *
+ *
+ * @param Struct SensInfo Dists - Estrutura de dados com as strings correspondentes às leituras dos sensores.
+ * @param int fd - Inteiro que identifica a porta série.
+ * \return Inteiro genérico.
+ */
 int TransMain(struct SensInfo Dists,int fd){
 
     int n, shm_id;
@@ -164,11 +208,8 @@ int TransMain(struct SensInfo Dists,int fd){
     ToShm->roll=atof(Dists.roll);
     ToShm->pitch=atof(Dists.pitch);
 
-    //ToShm->num=atoi(Dists.dist1);
     ToShm->i=ToShm->i+1;
     ToShm->fd=fd;
-
-    //printf("Transf: %f %f %f %f %f %f \n", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->roll, ToShm->pitch);
 
     //detatch do segmento de memoria uma vez que estamos a sair
     if (shmdt(ToShm)==1){perror("shmt");exit(1);}
@@ -176,155 +217,3 @@ int TransMain(struct SensInfo Dists,int fd){
     return 0;
 }
 
-void destroy_Wind(GtkWidget * window, GdkEvent * event, gpointer data){
-        ContRead=1;
-        BtEnd=1;
-        puts("Pedido de destruição de janela");
-        gtk_main_quit();  //necessary to to leave GTK main loop
-}
-
-void InterceptCTRL_C(int a) {
-	   g_print("Sair por CTRL-C\n");
-	   gtk_main_quit();
-}
-
-int begin_read(GtkWidget * window, GdkEvent * event, gpointer data){
-
-    ContRead=g_timeout_add(1000,RefreshData,data);
-}
-
-gboolean RefreshData(gpointer data){
-
-    GtkTextView *ts = GTK_TEXT_VIEW(data);
-    GtkTextBuffer *buffer_dist=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"sens_val")));
-    GtkTextBuffer *buffer_roll=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"text_roll")));
-    GtkTextBuffer *buffer_pitch=gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_builder_get_object(builderG,"text_pitch")));
-
-    //ESCRITA NAS
-    int n, shm_id;
-    struct SensInfoNum *ToShm;
-    char write[100];
-    char roll[50];
-    char pitch[50];
-    FILE *f=fopen("sensores_data.txt","a+");
-    if (f == NULL){printf("Error opening file!\n");exit(1);}
-
-    shm_id=GetSharedMem();
-    if(shm_id ==-1) return-1; //failiure
-
-    ToShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
-    if (ToShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
-
-    sprintf(write," %.03f | %.03f | %.03f | %.03f -%d", ToShm->dist1, ToShm->dist2, ToShm->dist3, ToShm->dist4, ToShm->i);
-    sprintf(roll," %.03f ", ToShm->roll);
-    sprintf(pitch," %.03f ",ToShm->pitch);
-
-    //write to file
-    fprintf(f,"%s Roll: %s, Pitch: %s\n",write,roll,pitch);
-
-    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
-    GtkImage *image_roll=GTK_IMAGE(gtk_builder_get_object(builderG, "roll_img"));
-    //gchar* filename;
-    gchar filename1[50];
-    gchar filename2[50];
-    int order;
-    float aux,spaces;
-
-    //Escolha de imagens para pitch
-    if (ToShm->pitch>=0){
-        spaces=2.0/5.0;
-        aux=(ToShm->pitch)/spaces;
-        order=ceil(aux);
-        if(order>5){order=5;}
-        if(ToShm->pitch<=0.05){order=0;}
-        g_snprintf(filename1,50,"../srcutils/img/vista_lado%i-.png",order);
-    }
-    else{
-        spaces=2.0/7.0;
-        aux=ToShm->pitch/spaces;
-        order=ceil(abs(aux));
-        //printf("pitch %i\n", order);
-        if(ToShm->pitch>=-0.05){order=0;}
-        if (order>7){order=7;}
-        g_snprintf(filename1,50,"../srcutils/img/vista_lado%i+.png",order);
-        //printf("%s",filename2);
-    }
-
-    //Escolha de imagem para o Roll
-
-    if (ToShm->roll>=0){
-        spaces=2.0/5.0;
-        aux=(ToShm->roll)/spaces;
-        order=ceil(aux);
-        if(ToShm->roll<=0.05){order=0;}
-        if(order>5){order=5;}
-        g_snprintf(filename2,50,"../srcutils/img/vista_tras%i-.png",order);
-    }
-    else{
-        spaces=2.0/4.0;
-        aux=ToShm->pitch/spaces;
-        order=ceil(abs(aux));
-        //printf("roll %i\n",order);
-        if(ToShm->roll>=-0.05){order=0;}
-        if (order>4){order=4;}
-        g_snprintf(filename2,50,"../srcutils/img/vista_tras%i+.png",order);
-    }
-
-       // printf("%s\n",filename1);
-       // printf("%s\n",filename2);
-    //Set pitch and roll img in gtk
-    gtk_image_set_from_file (image_pitch,filename1);
-    gtk_image_set_from_file (image_roll,filename2);
-    //close file
-    fclose(f);
-
-    gtk_text_buffer_set_text (buffer_dist, write, -1);
-    gtk_text_buffer_set_text (buffer_roll, roll, -1);
-    gtk_text_buffer_set_text (buffer_pitch, pitch, -1);
-
-    memset(&write[0], 0, sizeof(write));
-    memset(&roll[0], 0, sizeof(roll));
-    memset(&pitch[0], 0, sizeof(pitch));
-
-    //detatch do segmento de memoria uma vez que estamos a sair
-    if (shmdt(ToShm)==1){perror("shmt");exit(1);}
-
-    return TRUE;
-}
-
-
-int stop_read(GtkWidget * window, GdkEvent * event, gpointer data){
-
-    //ContRead=1;
-    g_source_remove(ContRead);
-}
-
-//void change_img(GtkWidget * window, GdkEvent * event, gpointer data){
-//
-//    gchar *filename="../build/img/30.png";
-//    GtkImage *image_pitch=GTK_IMAGE(gtk_builder_get_object(builderG, "pitch_img"));
-//
-//    gtk_image_set_from_file (image_pitch,filename);
-//
-//    //decobrir como funciona o timeout
-//}
-
-int calib_sens(GtkWidget * window, GdkEvent * event, gpointer data){
-
-    int shm_id;
-    struct SensInfoNum *FromShm;
-
-    shm_id=GetSharedMem();
-    if(shm_id ==-1) return-1; //failiure
-
-    FromShm= (struct SensInfoNum *)shmat(shm_id, (void *) 0,0);
-    if (FromShm == (struct SensInfoNum *) (-1)) {perror("shmat");exit(1);}
-
-    FromShm->BtWrite=1;
-    //FromShm->BtText="C";
-    sprintf(FromShm->BtText,"C");
-    printf("aqui\n");
-    //printf("Envido C para %i. \n",FromShm->calib);
-
-    if (shmdt(FromShm)==1){perror("shmt");exit(1);}
-}

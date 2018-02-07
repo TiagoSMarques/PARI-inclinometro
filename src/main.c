@@ -1,3 +1,23 @@
+/**
+ *      @file  main.c
+ *      @brief Função principal do programa que estabelece comunicação com um dispositivo bluetooth,
+ *      faz o display e animação destes numa interface GTK.
+ *
+ *      Nesta função é estabelecido a organização do programa. Sendo que este é constituido por um fork
+ *      inicial que separa a aplicação GTk e a transmissão de dados, esta por sua vez também dividida por um fork em
+ *      recepção e envio de dados.
+ *
+ *     Mais informações sobre o projeto em: https://github.com/TiagoSMarques/PARI-inclinometro
+ *     @author  Tiago Marques,  marques.tiago19@ua.pt
+ *
+ *   @internal
+ *     Created  28-Jan-2018
+ *   Revisions  06-Feb-2018
+ *
+ * =====================================================================================
+ */
+
+
 //Programa principal
 //
 #define _MAIN_C_
@@ -101,12 +121,6 @@ int main (int argc, char *argv[]) {
         signal(SIGINT, InterceptCTRL_C);
    //     /* Hand control over to the main loop. */
         gtk_main();
-
-//        while(FromShm->i != 20){
-//            printf("Main:   %f %f %f %f %f %f   %d\n", FromShm->dist1, FromShm->dist2, FromShm->dist3, FromShm->dist4, FromShm->roll, FromShm->pitch, FromShm->i);
-//            //tempo de espera tem de ser sintonizado com o tempo de envio no arduino
-//            sleep(1);
-//        }
 
         FromShm->BtWrite=1;
         //FromShm->BtText="exit";

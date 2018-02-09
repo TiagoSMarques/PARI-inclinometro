@@ -70,7 +70,6 @@ int ReadPortUntilChar(int fd){
                 n=read(fd, &ch, 1);
                 if (n == -1) continue;
                 if (n > 0) {
-                    //printf ("%c", ch);
                     if(ch=='#'){exit=1;break;}
                     else if(ch=='$'){break;}
                     else if(ch=='!'){exit=1;end=1;break;}

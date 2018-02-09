@@ -200,4 +200,4 @@ int calib_sens(GtkWidget * window, GdkEvent * event, gpointer data){
     FromShm->BtWrite=1;
     sprintf(FromShm->BtText,"C");
     if (shmdt(FromShm)==1){perror("shmt");exit(1);}
-}
+    }

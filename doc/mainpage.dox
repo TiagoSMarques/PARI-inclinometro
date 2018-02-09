@@ -8,58 +8,94 @@
  * Para um acompanhamento mais detalhado do percurso do projeto consultar: https://github.com/TiagoSMarques/PARI-inclinometro
  *
  * @author  Tiago Marques nº 73138
- * @section exerc_sec Projeto Final
+\section Int Introdução e objetivos
 
-Para usar cmake, o principal é criar o ficheiro CMakeLists.txt.
-Uma versão minimalista é a seguinte :
-\code {.sh}
-#-------------------------------------------------------------------------
-cmake_minimum_required (VERSION 2.8)
-project (Aula14Ex5+)
-set(PROG myf)
-set(SOURCES src/main.c src/aux.c src/callbacks.c)
-add_executable(${PROG} ${SOURCES})
-#-------------------------------------------------------------------------
+No âmbito do projeto final da cadeira de PARI foi proposto a realização de um programa que estabelece a comunicação
+com um arduino que contem as informações da leitura de quatro sensores de distância colocados no AtlasCar2 e
+que utiliza esses dados para representar graficamente numa interface GTK a inclinação do veículo nas suas componentes de Roll e Pitch.
+
+Uma vez que o sistema de leitura com o arduino já tinha presente um módulo de bluetooth decidiu-se
+utilizá-lo como meio de comunicação para a transferência dos dados.
+*@image html "intro.png" "Esquema geral da estrutura do projeto"
+
+A figura representa a organização geral do projeto. Cujo funcionamento foi descrito acima.
+\n \n
+
+@section T1 Estrutura e funcionamento do programa
+
+@subsection R1 Funcionamento
+
+Para iniciar a comomunicação com o dispositivo bluetooth remoto é preciso primeiro emparelhá-lo com o módulo de bluetooth
+do computador que irá correr o programa. Para isso usou-se uma aplicação de terceiros disponível nos repositórios base,
+denominada RFCOMM. Esta aplicação permite fazer o emparelhamento entre os dois dispositivos se se conhecer o MAC Address do
+aparelho de destino, para além disso a aplicaçã permite escolher o número da porta de comunicação série que irá ser aberta para 
+o canal de comunicação. A documentação desta função pode ser encontrada em: http://manpages.ubuntu.com/manpages/trusty/man1/rfcomm.1.html
+
+Para determinar o MAC address do dispositivo foi criada uma função (testeBT.c) com base no exemplo apresentado em https://people.csail.mit.edu/albert/bluez-intro/c404.html
+que faz um scan dos dispositivos bluetooth na área e apresenta o seu endereço bem como o nome que lhes foi atribuído.
+Assim uma vez que este endereço é imutável determinou-se que para este aparelho e endereço é 0D:10:0B:1C:0B:27.
+
+A imagem seguinte representa um esquema geral da estrutura e organização do programa e irá de seguida ser descrito.
+*@image html "prog.png" "Esquema geral da estrutura do programa"
+
+Foi também adaptado o código do programa do micro-controlador (prog_ardMod.ino) para que este envie os dados por bluetooth e
+definiu-se também uma estrutura de mensagem a ser enviada para que o programa consiga fazer a identificação dos valores aquando da sua
+recepção. Assim a mensagem a ser enviada pelo micro-controlador tem a seguinte estrutura: dist1$dist2$dist3$dist4$roll$pitch#, onde '$' 
+representa o intervalo entre valores consecutivos e '#' representa o fim da linha de dados.
+
+O programa começa por criar um fork para que cada elemento deste se foque numa tarefa diferente. Um dos processo
+fica encarregue da aplicação GTK e das callbacks a ele associadas e o outro processo trata da comunicação com o
+dispositivo remoto. Este processo de comunicação por sua vez realiza outro fork para dividir a comunicação em
+envio de instruções e recepção de dados. A razão da realização de um novo fork resulta da necessidade enviar
+instruções para o arduino sem que seja interrompido o fluxo de dados a ser recebido pelo programa.
+
+No funcionamento no programa são enviadas mensagems de segundo a segundo, o programa recebe caracter a caracter e organiza os
+nas suas 6 componentes utilizando os separadores '$' e '#' mencionados acima. De seguida os dados são convertidos para numéricos
+e colocados na shared memory para que estejam disponíveis para serem acedidos pelo processo responsável pela aplicação GTK.
+
+*@image html "gtk1.png" "Esquema da interface gráfica"
+
+Do lado da aplicação GTK após o utilizador da a instrução "Start" o programa inicia uma rotina (RefreshData()) que 
+corre com um periodo de 1 segundo (que pode ser ajustado), cujo objetivo é representar na aplicação as informações lidas a partir dos sensores
+bem como os valores de rool e pitch. Esta função encarrega-se também da seleção das imagens representativas dos valores
+de inclinómetria. A escolha é feita com base nos valores recebidos, é feita um cálculo simples com base na variação
+máxima de angulo (2º) e nas imagens existentes para representar os movimentos negativos e positivos (5 e 7 imagens).
+
+\code {.c}
+//Escolha de imagens para pitch
+if (ToShm->pitch>=0){
+    spaces=2.0/5.0;            //intervalo de seleção de imagem
+    aux=(ToShm->pitch)/spaces; //adequar o valor lido ao intervalo correspondente
+    order=ceil(aux);           //acertar o valor
+    if(order>5){order=5;}      //contabilizar os limites
+    if(ToShm->pitch<=0.05){order=0;}
+    //trocar a imagem
+    g_snprintf(filename1,50,"../srcutils/img/vista_lado%i-.png",order); 
+}
+else{
+    spaces=2.0/7.0;
+    aux=ToShm->pitch/spaces;
+    order=ceil(abs(aux));
+    if(ToShm->pitch>=-0.05){order=0;}
+    if (order>7){order=7;}
+    g_snprintf(filename1,50,"../srcutils/img/vista_lado%i+.png",order);
+ }
 \endcode
 
-Para se testar o sucesso da deteção de uma biblioteca externa, como por exemplo
-o OpenCV e tomar alguma decisão alternativa, podia-se usar um código similar a este:
+O utilizador tem também a capacidade de fazer a calibração dos sensores apartir da interface gráfica,
+para isso a estrutura de dados da shared memory prevê dois campos, um inteiro que dá a indicação da 
+intenção de escrita e outro que contem a string da mensagem a ser enviada. Do lado do processo de envio 
+de dados essa função está sempre à escuta na shared memory e quando deteta a intenção de 
+envio de instruções lê a mensagem a ser enviada e envia-a para o sistema remoto, essa instrução
+irá depois ser interpretada pelo arduino que irá efetuar o código de calibração.
 
-\code {.sh}
-find_package( OpenCV REQUIRED )
-if ( NOT OpenCV_FOUND )
-        message(FATAL_ERROR "Package OpenCV required but not found!")
-endif( NOT OpenCV_FOUND )
-\endcode
+Ainda na aplicação GTK está previsto um campo que serviria para fazer uma previsão do terreno
+sobre o qual o veículo estaria a circular, no entanto esse mostrou-se um processo mais 
+trabalhoso e que exigiria uma série de testes para a sua implementação e por isso de momento
+encontra-se inativo. É apenas de notar que o programa escreve num documento de texto (que é criado na pasta build)
+os valores das medições dos sensores que serviriam para ser analisados depois.
 
-Para gerar a documentação Doxygen alguns passos standard podem ser recomendados:
-\verbatim
-        1-Criar um ficheiro de configuração genérico: Doxyfile.in
-        2-Criar o ficheiro de mainpage.dox para a descrição geral do projeto
-        3-Criar um target dedicado e outras intruções na CMakeLists.txt
-        4-Criar eventuais ficheiros auxiliares à documentação (como um logotipo, etc.)
-\endverbatim
-
-Para se criar o target para gerar documentação, o código da CMakeLists.txt poderá ser algo parecido ao seguinte:
-
-\code {.sh}
-find_package(Doxygen)
-option(BUILD_DOCUMENTATION "Create and install doc (requires Doxygen)" ${DOXYGEN_FOUND})
-if(BUILD_DOCUMENTATION)
-    if(NOT DOXYGEN_FOUND)
-        message(FATAL_ERROR "Doxygen is needed to build the documentation.")
-    endif()
-    set(doxyfile_in "${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in" )
-    set(doxyfile "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
-    set(doxy_main_page "${CMAKE_CURRENT_SOURCE_DIR}/doc/mainpage.dox")
-    configure_file(${doxyfile_in} ${doxyfile} @ONLY)
-    add_custom_target(doc
-        COMMAND ${DOXYGEN_EXECUTABLE}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM)
-endif()
-#code inspired on: http://www.tty1.net/blog/2014/cmake-doxygen_en.html
-\endcode
-
+Por último o botão de "close" da interface é o que termina todo o programa, tomando as
+precauções necessárias, na medida em que destrói a shared memory, fecha a porta de comunicação e dá
+a conhecer ao arduino que a ligação terminou, o qual responde com "bye!" identificando o fim de comunicação.
 */

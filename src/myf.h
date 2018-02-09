@@ -74,7 +74,7 @@ float pitch;
 int i;
 /**@param inteiro com o valor da porta serie que foi aberta*/
 int fd;
-/**@param inteiro que representa a intensão de enviar mensagem pela porta serie*/
+/**@param inteiro que representa a intenção de enviar mensagem pela porta serie*/
 int BtWrite;
 /**@param  string que se deseja enviar*/
 char BtText[20];

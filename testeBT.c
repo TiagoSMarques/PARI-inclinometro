@@ -1,3 +1,17 @@
+/**
+ * @file testeBT.c
+ * @brief Função para fazer um scan dos aparelho bluetooth nas proximidades
+ *e imprimir no terminal os respetivos endereços MAC e o nome comum associado ao aparelho.
+
+ *Código baseado no exemplo mostrado em  https://people.csail.mit.edu/albert/bluez-intro/c404.html
+ * Mais informações sobre o projeto em: https://github.com/TiagoSMarques/PARI-inclinometro
+ *
+ * @author Tiago Marques, marques.tiago19@ua.pt
+ * @internal
+     Created 28-Jan-2018
+ * Revisions 06-Feb-2018
+ *  =====================================================================================
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

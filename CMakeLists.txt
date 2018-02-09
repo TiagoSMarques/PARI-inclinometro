@@ -5,7 +5,7 @@ set(PROG btcom)
 
 
 include_directories(${GTK_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/srcutils) 
-include_directories(${PROJECT_SOURCE_DIR}/srcutils/img)
+include_directories(${PROJECT_SOURCE_DIR}/srcutils/img ${PROJECT_SOURCE_DIR}/prog_ardMod)
 #--------------------------------------
 set(SOURCES src/myf.c src/main.c src/callbacks.c)
 #set(SOURCES src/server_test.c )
